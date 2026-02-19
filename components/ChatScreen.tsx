@@ -9,35 +9,14 @@ interface ChatScreenProps {
   pet: Pet;
 }
 
-const generatePetResponse = (pet: Pet, userMessage: string): string => {
-  const greetings = [
-    `${pet.name}야, 너무 보고싶어`,
-    `오늘 하루 어땠어?`,
-    `사랑해`,
-    `잘 지내고 있어?`,
-  ];
-  
-  const responses = [
-    `야옹~ 나도 ${userMessage.includes('보고싶') ? '너무너무 보고싶어요!' : '여기서 잘 지내고 있어요!'} 무지개 다리 너머에서도 항상 곁에 있을게요 💕`,
-    `${pet.name}도 많이 생각하고 있어요! 하늘에서 항상 지켜보고 있답니다 ✨`,
-    `고마워요! 저도 사랑해요~ 행복한 추억들 덕분에 여기서도 행복해요 🌈`,
-    `오늘도 좋은 하루 보내세요! 저는 여기서 다른 친구들이랑 신나게 놀고 있어요 😸`,
-    `가끔 꿈에서 만나요! 그때 얼굴 보여줄게요~ 항상 응원하고 있어요 💫`,
-  ];
-
-  const memoryResponses = pet.memories.length > 0 ? [
-    `그때 그 기억... "${pet.memories[Math.floor(Math.random() * pet.memories.length)]?.content}" 저도 그때가 너무 좋았어요! 🥰`,
-  ] : [];
-
-  const allResponses = [...responses, ...memoryResponses];
-  return allResponses[Math.floor(Math.random() * allResponses.length)];
-};
+// 이 함수는 더 이상 사용되지 않습니다 (Gemini API 사용)
 
 export function ChatScreen({ pet }: ChatScreenProps) {
+  const honorific = pet.honorific || '언니'; // 기본값 설정
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      content: `안녕! ${pet.name}야 여기야~ 무지개 다리 너머에서도 항상 옆에 있을게요! 오늘 하루는 어땠어요? 💕`,
+      content: `${honorific}! 안녕. 나 ${pet.name}이야. 잘 지냈어?`,
       sender: 'pet',
       timestamp: new Date().toISOString(),
     }
@@ -62,23 +41,60 @@ export function ChatScreen({ pet }: ChatScreenProps) {
     setMessages(prev => [...prev, userMessage]);
     setIsTyping(true);
 
-    // Simulate pet typing
-    await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1500));
+    try {
+      // 대화 히스토리 준비 (최근 10개 메시지)
+      const recentHistory = messages.slice(-10).map(msg => ({
+        role: msg.sender as 'user' | 'pet',
+        content: msg.content,
+      }));
 
-    const petMessage: Message = {
-      id: crypto.randomUUID(),
-      content: generatePetResponse(pet, content),
-      sender: 'pet',
-      timestamp: new Date().toISOString(),
-    };
+      // Gemini API 호출
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          pet,
+          message: content,
+          conversationHistory: recentHistory,
+        }),
+      });
 
-    setIsTyping(false);
-    setMessages(prev => [...prev, petMessage]);
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'AI 응답 생성 실패');
+      }
+
+      const data = await response.json();
+      
+      const petMessage: Message = {
+        id: crypto.randomUUID(),
+        content: data.response || '응답을 생성하지 못했어요...',
+        sender: 'pet',
+        timestamp: new Date().toISOString(),
+      };
+
+      setIsTyping(false);
+      setMessages(prev => [...prev, petMessage]);
+    } catch (error: any) {
+      console.error('채팅 오류:', error);
+      setIsTyping(false);
+      
+      // 오류 발생 시 기본 응답 사용
+      const fallbackMessage: Message = {
+        id: crypto.randomUUID(),
+        content: `죄송해요... ${error.message || '응답을 생성하지 못했어요'}. 다시 말해주실래요? 😿`,
+        sender: 'pet',
+        timestamp: new Date().toISOString(),
+      };
+      setMessages(prev => [...prev, fallbackMessage]);
+    }
   };
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden">
-      <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-4">
+    <div className="flex-1 flex flex-col overflow-hidden min-h-0">
+      <div ref={scrollRef} className="flex-1 overflow-y-auto space-y-4 min-h-0" style={{ padding: '7.5%' }}>
         {messages.map(msg => (
           <ChatMessage 
             key={msg.id} 

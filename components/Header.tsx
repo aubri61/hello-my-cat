@@ -13,7 +13,7 @@ interface HeaderProps {
 
 export function Header({ pet, onMenuClick, onLetterClick, unreadCount }: HeaderProps) {
   return (
-    <header className="flex items-center justify-between px-4 py-3 border-b border-border/50 bg-card/80 backdrop-blur-sm safe-area-top">
+    <header className="flex items-center justify-between px-5 py-4 border-b border-border/50 bg-card/80 backdrop-blur-sm safe-area-top">
       <button 
         onClick={onMenuClick}
         className="p-2 -ml-2 rounded-full hover:bg-secondary transition-colors"
