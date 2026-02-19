@@ -4,6 +4,7 @@ export interface Pet {
   photo: string | null;
   species: 'cat' | 'dog' | 'bird' | 'rabbit' | 'hamster' | 'other';
   personality: string;
+  honorific: string; // 호칭 (언니, 엄마, 아빠, 누나, 형, 오빠 등)
   memories: Memory[];
   createdAt: string;
 }

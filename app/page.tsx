@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { AppLayout } from '@/components/AppLayout';
-import { Header } from '@/components/Header';
-import { ChatScreen } from '@/components/ChatScreen';
-import { WelcomeScreen } from '@/components/WelcomeScreen';
-import { PetSelector } from '@/components/PetSelector';
-import { AddPetModal } from '@/components/AddPetModal';
-import { MemoryRecorder } from '@/components/MemoryRecorder';
-import { DailyLetterView } from '@/components/DailyLetterView';
-import { usePets } from '@/hooks/usePets';
+import { useState } from "react";
+import { AppLayout } from "@/components/AppLayout";
+import { Header } from "@/components/Header";
+import { ChatScreen } from "@/components/ChatScreen";
+import { WelcomeScreen } from "@/components/WelcomeScreen";
+import { PetSelector } from "@/components/PetSelector";
+import { AddPetModal } from "@/components/AddPetModal";
+import { MemoryRecorder } from "@/components/MemoryRecorder";
+import { DailyLetterView } from "@/components/DailyLetterView";
+import { usePets } from "@/hooks/usePets";
 
-type View = 'chat' | 'letters';
+type View = "chat" | "letters";
 
 export default function Home() {
   const {
@@ -30,7 +30,7 @@ export default function Home() {
 
   const [showPetSelector, setShowPetSelector] = useState(false);
   const [showAddPet, setShowAddPet] = useState(false);
-  const [currentView, setCurrentView] = useState<View>('chat');
+  const [currentView, setCurrentView] = useState<View>("chat");
 
   const unreadCount = selectedPet ? getUnreadLettersCount(selectedPet.id) : 0;
 
@@ -39,7 +39,9 @@ export default function Home() {
       <Header
         pet={selectedPet}
         onMenuClick={() => setShowPetSelector(true)}
-        onLetterClick={() => setCurrentView(currentView === 'letters' ? 'chat' : 'letters')}
+        onLetterClick={() =>
+          setCurrentView(currentView === "letters" ? "chat" : "letters")
+        }
         unreadCount={unreadCount}
       />
 
@@ -47,21 +49,28 @@ export default function Home() {
         <WelcomeScreen onAddPet={() => setShowAddPet(true)} />
       ) : selectedPet ? (
         <>
-          {currentView === 'chat' ? (
-            <>
+          {currentView === "chat" ? (
+            <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
               <ChatScreen pet={selectedPet} />
               <MemoryRecorder
                 pet={selectedPet}
                 onAddMemory={(memory) => addMemory(selectedPet.id, memory)}
               />
-            </>
+            </div>
           ) : (
+            // <>
+            //   <ChatScreen pet={selectedPet} />
+            //   <MemoryRecorder
+            //     pet={selectedPet}
+            //     onAddMemory={(memory) => addMemory(selectedPet.id, memory)}
+            //   />
+            // </>
             <DailyLetterView
               pet={selectedPet}
               letters={letters}
               onMarkAsRead={markLetterAsRead}
               onAddLetter={addLetter}
-              onBack={() => setCurrentView('chat')}
+              onBack={() => setCurrentView("chat")}
             />
           )}
         </>

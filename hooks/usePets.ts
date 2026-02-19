@@ -15,9 +15,14 @@ export function usePets() {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
       const parsedPets = JSON.parse(stored);
-      setPets(parsedPets);
-      if (parsedPets.length > 0 && !selectedPetId) {
-        setSelectedPetId(parsedPets[0].id);
+      // 기존 데이터 호환성: honorific이 없으면 기본값 설정
+      const petsWithHonorific = parsedPets.map((pet: Pet) => ({
+        ...pet,
+        honorific: pet.honorific || '언니',
+      }));
+      setPets(petsWithHonorific);
+      if (petsWithHonorific.length > 0 && !selectedPetId) {
+        setSelectedPetId(petsWithHonorific[0].id);
       }
     }
 

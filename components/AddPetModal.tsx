@@ -22,10 +22,15 @@ const speciesOptions: { value: Pet['species']; label: string; icon: React.ReactN
   { value: 'other', label: '기타', icon: <Heart className="w-5 h-5" /> },
 ];
 
+const honorificOptions = ['언니', '엄마', '아빠', '누나', '형', '오빠'];
+
 export function AddPetModal({ open, onClose, onAdd }: AddPetModalProps) {
   const [name, setName] = useState('');
   const [species, setSpecies] = useState<Pet['species']>('cat');
   const [personality, setPersonality] = useState('');
+  const [honorific, setHonorific] = useState('');
+  const [customHonorific, setCustomHonorific] = useState('');
+  const [useCustomHonorific, setUseCustomHonorific] = useState(false);
   const [photo, setPhoto] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -43,16 +48,25 @@ export function AddPetModal({ open, onClose, onAdd }: AddPetModalProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (name.trim()) {
+      const finalHonorific = useCustomHonorific ? customHonorific.trim() : honorific;
+      if (!finalHonorific) {
+        alert('호칭을 선택하거나 입력해주세요.');
+        return;
+      }
       onAdd({
         name: name.trim(),
         species,
         personality: personality.trim() || '사랑스러운 아이',
+        honorific: finalHonorific,
         photo,
       });
       // Reset form
       setName('');
       setSpecies('cat');
       setPersonality('');
+      setHonorific('');
+      setCustomHonorific('');
+      setUseCustomHonorific(false);
       setPhoto(null);
       onClose();
     }
@@ -138,6 +152,56 @@ export function AddPetModal({ open, onClose, onAdd }: AddPetModalProps) {
                   <span className="text-sm">{opt.label}</span>
                 </button>
               ))}
+            </div>
+          </div>
+
+          {/* Honorific Selection */}
+          <div>
+            <label className="text-sm font-medium text-foreground mb-2 block">
+              호칭
+            </label>
+            <div className="space-y-2">
+              <div className="flex gap-2 flex-wrap">
+                {honorificOptions.map(opt => (
+                  <button
+                    key={opt}
+                    type="button"
+                    onClick={() => {
+                      setHonorific(opt);
+                      setUseCustomHonorific(false);
+                    }}
+                    className={`px-3 py-2 rounded-xl transition-all text-sm ${
+                      !useCustomHonorific && honorific === opt
+                        ? 'bg-primary text-primary-foreground shadow-soft'
+                        : 'bg-secondary hover:bg-secondary/80'
+                    }`}
+                  >
+                    {opt}
+                  </button>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setUseCustomHonorific(true);
+                    setHonorific('');
+                  }}
+                  className={`px-3 py-2 rounded-xl transition-all text-sm ${
+                    useCustomHonorific
+                      ? 'bg-primary text-primary-foreground shadow-soft'
+                      : 'bg-secondary hover:bg-secondary/80'
+                  }`}
+                >
+                  직접 입력
+                </button>
+              </div>
+              {useCustomHonorific && (
+                <Input
+                  value={customHonorific}
+                  onChange={(e) => setCustomHonorific(e.target.value)}
+                  placeholder="호칭을 입력하세요"
+                  className="rounded-xl"
+                />
+              )}
             </div>
           </div>
 

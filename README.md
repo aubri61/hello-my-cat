@@ -1,36 +1,43 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Hello My Cat
 
-## Getting Started
+무지개별로 여행 간, 사랑하는 내 반려동물과 대화할 수 있는 챗봇입니다. 그리울 때 내 반려동물과 대화를 나눠보세요.
 
-First, run the development server:
+## 주요 기능
+
+### 💬 실시간 채팅
+- AI 기반 자연스러운 대화
+- 반려동물의 성격과 특징을 반영한 개인화된 응답
+- 대화 히스토리 저장
+
+### 🐾 반려동물 프로필 관리
+- 반려동물 정보 등록 (이름, 사진, 호칭 등)
+
+### 📝 추억 기록
+- 함께한 순간들을 기록하고 저장
+- 반려동물과의 소중한 기억 보관
+
+### 💌 일기/편지
+- 반려동물에게 편지를 작성하고 읽기
+- 읽지 않은 편지 알림 기능
+
+## 시작하기
+
+프로젝트를 클론하고 의존성을 설치한 후, 환경 변수를 설정하세요.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+`.env` 파일에 Gemini API 키를 설정하세요:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+GEMINI_API_KEY=your_api_key_here
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 기술 스택
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Next.js
+- React
+- TypeScript
+- Gemini API
+- Tailwind CSS
